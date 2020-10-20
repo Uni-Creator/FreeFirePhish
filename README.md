@@ -5,6 +5,8 @@ Created by Uni-Creator
 1. PHP --> pkg install php -y
 2. CURL --> pkg install curl -y
 3. NGROK or SERVEO (any one) 
+4. termux-api --> pkg install termux-api
+
 
 # Installation
 Step 1} git clone https://github.com/Uni-Creator/FFPhish
@@ -15,7 +17,7 @@ Step 3} chmod +x freefire.sh
 
 Step 4} ./freefire.sh
 
- And you are all done!
+ And you are all done!!!
 
 # Working
 Hey guys let's start some phishing and catch some I'd and password.
@@ -28,5 +30,5 @@ in Second step it uses Ngrok or Serveo to create a cloud server and upload all t
 
 and in Last but not least it uses some URL shortener websites to shorten the URL, so no one can suspect that it is a fake link.
 
-#
-I hope you like this tool...
+#    
+I hope you like this tool...👍🏻👍🏻👍🏻👍🏻👍🏻
