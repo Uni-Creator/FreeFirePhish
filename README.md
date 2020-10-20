@@ -2,8 +2,8 @@
 Created by Uni-Creator
 
 # Requirements
-1. PHP
-2. CURL
+1. PHP --> pkg install php -y
+2. CURL --> pkg install curl -y
 3. NGROK or SERVEO (any one) 
 
 # Installation
