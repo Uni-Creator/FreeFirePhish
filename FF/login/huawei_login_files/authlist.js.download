@@ -1,0 +1,302 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2020-2020. All rights reserved.
+ */
+if (!Array.prototype.forEach) {
+    Array.prototype.forEach = function(fun){
+        var len = this.length;
+        if (typeof fun != "function")
+            throw new TypeError();
+        var thisp = arguments[1];
+        for (var i = 0; i < len; i++){
+            if (i in this)
+                fun.call(thisp, this[i], i, this);
+        }
+    };
+}
+
+if (!Element.prototype.remove) {
+    Element.prototype.remove = function(){this.parentElement.removeChild(this);}
+}
+
+if (!NodeList.prototype.forEach) {
+    NodeList.prototype.forEach = Array.prototype.forEach;
+}
+
+function AuthListOperation(skipAuth) {
+    this.authList = {};
+    this.hiddenMap = {};
+    this.limitedScopeIds = []; // 表示是否有请求儿童受限权限
+    this.isSkipAuth = skipAuth;
+    this.newScopes = [];
+    this.oldScopes = [];
+    //button_light_huawei_checkbox_light_on.png 已选择
+    this.img_unselected = "../../webview-eu/images/button_light_huawei_checkbox_light_off.png";
+    //button_light_huawei_checkbox_light_off.png 未选择
+    this.img_selected = "../../webview-eu/images/button_light_huawei_checkbox_light_on.png";
+    //button_light_huawei_checkbox_light_ondisable.png  已选择，禁止编辑
+    this.img_selected_disabled = "../../webview-eu/images/button_light_huawei_checkbox_light_ondisable.png";
+    //ic_click_choose.png  已全部选中
+    this.img_all_selected = "../../webview-eu/images/ic_click_choose.png";
+    //ic_normal_choose.png 未全部选中
+    this.img_all_unselected = "../../webview-eu/images/ic_normal_choose.png";
+
+    // 初始化相关数据
+    this.init = function (auths) {
+        var result = JSON.parse(auths);
+        this.authList = result.authList;
+        this.hiddenMap = result.hiddenMap;
+        var form = document.getElementById("auth-login");
+        for (var item in this.hiddenMap) {
+            var ele = document.createElement("input");
+            ele.name = item;
+            ele.type = "hidden";
+            ele.value = this.hiddenMap[item];
+            form.appendChild(ele);
+        }
+
+        // 初始判断是否含有儿童受限权限
+        for(var auth in this.authList) {
+            if (!this.authList[auth].childAllowed) {
+                this.limitedScopeIds.push(this.authList[auth].id);
+            }
+            if (this.authList[auth].display !== 'none') {
+                // 过滤掉授权过，不再显示
+                this.newScopes.push(this.authList[auth]);
+            } else {
+                this.oldScopes.push(auth);
+            }
+        }
+    };
+
+    // 检查是否全部必选，如果是，将复选框隐藏
+    this.checkAllMust = function () {
+        var notMustItems = document.querySelectorAll(".top-content .auth-list ul.right-list .right-item[data-must='false']");
+        if (!notMustItems || notMustItems.length === 0) {
+            document.querySelector(".top-content .auth-list .select-all-Off").setAttribute("style", "display:none");
+            var ele = document.querySelector(".top-content .auth-list .right-list");
+            ele.setAttribute("class", ele.getAttribute("class") + " marginTop20");
+            var allItems = document.querySelectorAll(".top-content .auth-list ul.right-list .right-item");
+            allItems.forEach(function (item) {
+                item.querySelector(".checkbox-item").setAttribute("style", "display:none");
+                item.querySelector(".scope-desc").setAttribute("class", "scope-desc margin-right0");
+            });
+            return true;
+        }
+        return false;
+    };
+
+    // 检查是否已经全选了
+    this.initAllCheck = function () {
+        var noneDisplayItems = document.querySelectorAll(".top-content .auth-list ul.right-list .right-item[style='display:none']");
+        var allItems = document.querySelectorAll(".top-content .auth-list ul.right-list .right-item");
+        var allEle = document.querySelector(".top-content .auth-list .select-all-Off");
+        if (noneDisplayItems.length === allItems.length) {
+            // 表示都隐藏了
+            allEle.setAttribute("style", "display:none");
+            document.querySelector(".right-list.scrollbar").setAttribute("style", "display:none");
+            return;
+        }
+
+        var items = document.querySelectorAll(".top-content .auth-list ul.right-list .right-item[data-must='false'] .checkbox-item[data-checked='false']");
+        var allChecked = !items || items.length === 0;
+        allEle.setAttribute("data-status", allChecked ? "all" : "none");
+        allEle.querySelector(".all").setAttribute("style",allChecked ? "display:none" : "");
+        allEle.querySelector(".none").setAttribute("style",allChecked ? "" : "display:none");
+        allEle.querySelector(".checkbox-all img").setAttribute("src", allChecked ? this.img_all_selected : this.img_all_unselected);
+    }
+}
+
+// 登录完成，需要重新刷新列表（包括儿童账号禁用授权项展示）
+// 返回值表示：是否要处理儿童受限问题
+// childCallback: 儿童受限确认操作
+AuthListOperation.prototype.refreshAuthList = function (auths, isAutoLogin, childCallback) {
+    this.init(auths);
+
+    // 手动登录，没有请求儿童受限权限，不需要刷新列表
+    if (!isAutoLogin && this.limitedScopeIds.length === 0) {
+        return false;
+    }
+
+    // 没有新增的scope，直接登录授权
+    if (this.newScopes.length === 0) {
+        return false;
+    }
+
+    if (isAutoLogin) {
+        var tipsNotLogin = document.querySelector(".top-content .authorize-tips.no-login");
+        var tips = document.querySelector(".top-content .authorize-tips.login");
+        tipsNotLogin.setAttribute("style", "display:none");
+        tips.setAttribute("style", "display:block");
+    }
+
+    var _this = this;
+    // 自动登录，没有儿童受限权限，authList中不存在的项目隐藏即可
+    if (isAutoLogin) {
+        var ids = [];
+        for(var item in this.newScopes) {
+            ids.push(this.newScopes[item].id);
+        }
+        var items = document.querySelectorAll(".top-content .auth-list ul.right-list .right-item");
+        items.forEach(function (value) {
+            if (ids.indexOf(value.getAttribute("id")) < 0) {
+                value.setAttribute("style", "display:none");
+            }
+        });
+        if (this.limitedScopeIds.length === 0) {
+            return false;
+        }
+    }
+
+    // 手动登录，有请求儿童受限权限，检查用户是否勾选受限权限
+    if (!isAutoLogin && this.limitedScopeIds.length > 0) {
+        // 检查是否有勾选儿童受限权限
+        var selectedLimitedScopes = [];
+        var selectedItems = document.querySelectorAll(".auth-list ul.right-list li.right-item .checkbox-item[data-checked='true']");
+        if (selectedItems && selectedItems.length > 0){
+            selectedItems.forEach(function (value) {
+                if (_this.limitedScopeIds.indexOf(value.parentElement.getAttribute("id"))> -1) {
+                    selectedLimitedScopes.push({
+                        id: value.parentElement.getAttribute("id"),
+                        scope: value.parentElement.getAttribute("data-url"),
+                        desc: value.parentElement.querySelector(".scope-desc").innerHTML
+                    });
+                }
+            })
+        }
+        // 如果没有勾选项，不需要弹出提醒
+        if (selectedLimitedScopes.length === 0) {
+            return false;
+        }
+
+        // 隐藏登录弹窗
+        var loginDialogEle = document.querySelector(".hwid-root .hwid-dialog-root");
+        if (loginDialogEle) {
+            loginDialogEle.remove();
+        }
+
+        // 弹窗提示受限权限
+        var str = "";
+        selectedLimitedScopes.forEach(function (value) {
+            str += '<li class="right-item" id="' + value.id + '" data-url="' + value.scope + '"><span class="scope-desc">' + value.desc + '</span></li>';
+        });
+        var dialogNoRightContainer = document.querySelector(".global_dialog_confirm_main .global_dialog_confirm_content ul.noright-options-wrap");
+        dialogNoRightContainer.innerHTML = str;
+
+        var dialogMask = document.querySelector(".global_black_overlay");
+        dialogMask.setAttribute("style", "display:block");
+        var dialog = document.querySelector(".global_dialog_confirm_main");
+        dialog.setAttribute("style", "display:block;");
+        var marginTop = dialog.clientHeight / 2;
+        dialog.setAttribute("style", "display:block; margin-top:" + (-marginTop) + "px");
+
+        //添加绑定事件
+        var okBtn = document.querySelector(".global_dialog_confirm_main .global_dialog_confirm_ft .dialog-btn.ok");
+        var okClick = function () {
+            dialogMask.setAttribute("style", "display:none;");
+            dialog.setAttribute("style", "display:none;");
+            childCallback(true);
+        }
+        okBtn.removeEventListener("click", okClick);
+        okBtn.addEventListener("click", okClick);
+        var cancelBtn = document.querySelector(".global_dialog_confirm_main .global_dialog_confirm_ft .dialog-btn.cancel");
+        var cancelClick = function () {
+            dialogMask.setAttribute("style", "display:none;");
+            dialog.setAttribute("style", "display:none;");
+            childCallback(false);
+        }
+        cancelBtn.removeEventListener("click", cancelClick);
+        cancelBtn.addEventListener("click", cancelClick);
+
+        return true;
+    }
+
+    // 自动登录，有请求儿童受限权限，在当前界面显示可授权和不可授权项目
+    if (isAutoLogin && this.limitedScopeIds.length > 0) {
+        var noRightContainer = document.querySelector(".auth-list .child-limit-container");
+        var noRightListContainer = noRightContainer.querySelector("ul.noright-options-wrap");
+        var rightListContainer = document.querySelector(".auth-list ul.right-list");
+        noRightContainer.setAttribute("style", "display:block");
+        var allItems = document.querySelectorAll(".auth-list ul.right-list li.right-item");
+        allItems.forEach(function (value) {
+            if (_this.limitedScopeIds.indexOf(value.getAttribute("id")) > -1) {
+                rightListContainer.removeChild(value);
+                noRightListContainer.appendChild(value);
+                value.querySelector(" .checkbox-item").setAttribute("style", "display:none");
+                value.querySelector(".scope-desc").setAttribute("class", "scope-desc margin-right0");
+            }
+        });
+
+        // 重新检查 allcheck
+        if (!this.checkAllMust()){
+            this.initAllCheck();
+        }
+        return true;
+    }
+};
+
+AuthListOperation.prototype.addEvent = function () {
+    // 如果是全部must，则不需要显示checkbox
+    if (this.checkAllMust()) {
+        return;
+    }
+
+    this.initAllCheck();
+
+    var _this = this;
+
+    // 全选按钮点击事件（当全选状态时，点击，全部取消，否在全部选择）
+    var allEle = document.querySelector(".top-content .auth-list .select-all-Off .checkbox-all");
+    var allClick = function () {
+        var checked =  this.parentElement.getAttribute("data-status") === 'all';
+        checked = !checked; // 取反
+        this.parentElement.setAttribute("data-status", checked ? "all" : "none");
+        this.parentElement.querySelector(".all").setAttribute("style",checked ? "display:none" : "");
+        this.parentElement.querySelector(".none").setAttribute("style",checked ? "" : "display:none");
+        this.querySelector("img").setAttribute("src", checked ? _this.img_all_selected : _this.img_all_unselected);
+
+        // 只查找允许编辑的选项
+        var items = document.querySelectorAll(".top-content .auth-list ul.right-list .right-item[data-must='false'] .checkbox-item img");
+        items.forEach(function (item) {
+            item.setAttribute("src", checked ? _this.img_selected : _this.img_unselected);
+            item.parentElement.setAttribute("data-checked", checked ? "true" : "false");
+        });
+    };
+    if (allEle) {
+        allEle.removeEventListener("click", allClick);
+        allEle.addEventListener("click", allClick);
+    }
+
+    // 列表项点击事件
+    var itemClick = function () {
+        var checked = this.getAttribute("data-checked") === 'true';
+        checked = !checked; // 取反
+        this.setAttribute("data-checked", checked ? "true" : "false");
+        this.querySelector("img").setAttribute("src", checked ? _this.img_selected : _this.img_unselected);
+
+        // 遍历查找，查看是否所有的都选择了，如果是，就需要将全选按钮选择上，否在取消权限
+        _this.initAllCheck();
+    };
+    var items = document.querySelectorAll(".top-content .auth-list ul.right-list .right-item[data-must='false'] .checkbox-item");
+    items.forEach(function (item) {
+        item.removeEventListener("click", itemClick);
+        item.addEventListener("click", itemClick);
+    })
+};
+
+// 获取需要授权的列表项
+AuthListOperation.prototype.getSelectedScopesUrl = function () {
+    var items = document.querySelectorAll(".auth-list ul.right-list li.right-item");
+    var authUrl = "";
+    var _this = this;
+    items.forEach(function(item) {
+        if (_this.isSkipAuth
+            || (_this.limitedScopeIds.indexOf(item.getAttribute("id")) < 0 && (item.getAttribute("data-must") === 'true'
+                || item.querySelector(".checkbox-item").getAttribute("data-checked") === 'true'))) {
+            var scope = item.getAttribute("data-url");
+            if (_this.oldScopes.indexOf(scope) < 0) {
+                _this.oldScopes.push(scope);
+            }
+        }
+    });
+    return this.oldScopes.join(" ");
+};

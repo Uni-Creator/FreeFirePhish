@@ -1,0 +1,510 @@
+
+/*
+ * Responsive styles
+ * 2019-08-22
+ */
+/* landscape */
+@media screen and (orientation: landscape) {
+  .container-bg {
+    background-image: url("../imgg/mobile-h-bg.jpg")
+  }
+  .mobile-mask {
+    display: none;
+  }
+  .main-desc p {
+    display: inline;
+  }
+  .logo {
+    width: 16vw;
+    height: 4vw;
+    background-image: url("../imgg/logo-black.png");
+  }
+  .main {
+    float: right;
+    margin: 0 9vw 0 auto;
+    padding-top: 11vh;
+    width: 320px;
+  }
+  .main-title,
+  .main-desc {
+    color: #000;
+  }
+  .loginbtn-group {
+    margin: 10vh 40px;
+  }
+  .input-group {
+    margin: 13vh 26px;
+  }
+  .input-group.one {
+    margin-top: 9vh;
+    margin-bottom: 4vh;
+  }
+  .notice {
+    display: none;
+    position: fixed;
+    padding: 0;
+    width: 320px;
+    bottom: calc(4rem + 37px);
+    border-radius: 5px;
+    border: solid 1px #5c5c5c;
+  }
+  .notice-inner {
+    background: rgba(255, 255, 255, 0.96);
+  }
+  .notice.show {
+    display: block;
+    animation: fadeInUp 0.5s both;
+  }
+  .notice-inner {
+    max-height: 60vh;
+  }
+  .notice-toggle {
+    display: block;
+    position: fixed;
+    bottom: 4rem;
+    width: 168px;
+    height: 32px;
+    margin-left: 76px;
+    line-height: 36px;
+    text-align: center;
+    border-radius: 6px 6px 0 0;
+    background-color: #e9a733;
+    cursor: pointer;
+  }
+  .notice-toggle::after {
+    content: "";
+    display: inline-block;
+    margin-left: 6px;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+    background: url("../imgg/arrow.png") no-repeat;
+    transition: transform .3s ease;
+  }
+  .notice-toggle.show::after {
+    transform: rotate(180deg);
+  }
+  .userinfo {
+    color: #000;
+  }
+  .copyright {
+    text-align: center;
+  }
+  .copyright-message {
+    width: inherit;
+  }
+}
+
+/* tablet portrait */
+@media screen and (min-width: 768px) and (orientation: portrait) {
+  .container-bg {
+    bottom: 106px;
+    background-image: url("../imgg/tablet-bg.jpg");
+  }
+  .container::before {
+    height: 9px;
+    background-image: url("../imgg/top_teeth-m.png")
+  }
+  .logo {
+    width: 21vw;
+    height: 5vw;
+    left: 6vw;
+    top: 3vw;
+  }
+  .mobile-mask {
+    display: none;
+  }
+  .main {
+    float: right;
+    margin: 0 7vw 0 auto;
+    padding-top: 14vh;
+    padding-bottom: 111px; /* footer 106 + margin 5 */
+    width: 420px;
+  }
+  .main-title,
+  .main-desc {
+    color: #161616;
+  }
+  .main:not(.ar_wrap) .main-title,
+  .main:not(.ar_wrap) .main-desc {
+    text-align: left;
+  }
+  .ar_wrap .main-title,
+  .ar_wrap .main-desc  {
+    text-align: right;
+  }
+  .main-desc .highlight {
+    color: #295396;
+  }
+  .main-title {
+    font-size: 55px;
+  }
+  .main-desc {
+    font-size: 25px;
+    font-weight: normal;
+  }
+  .loginbtn-group {
+    margin: 6vh 0;
+    width: 412px;
+  }
+  .btn-item {
+    width: 76px;
+    height: 76px;
+  }
+  .btn-item.facebook {
+    background-image: url("../imgg/facebook-m.png");
+  }
+  .btn-item.vk {
+    background-image: url("../imgg/vk-m.png");
+  }
+  .btn-item.huawei {
+    background-image: url("../imgg/huawei-m.png");
+  }
+  .btn-item.google {
+    background-image: url("../imgg/google-m.png");
+  }
+  .input-group {
+    margin-right: 0;
+    margin-left: 0;
+  }
+  .input-btn {
+    width: 117px;
+    height: 44px;
+    background-color: #ebebeb;
+    box-shadow: inset 0px 3px 2px 0px rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+  }
+  .input-group.one::before,
+  .input-group.one::after {
+    width: 8px;
+    height: 2px;
+    top: 21px;
+    background: #161616;
+  }
+  .input-group.one::before {
+    left: calc(((100% - 117px * 3) / 2 - 8px) / 2 + 117px);
+  }
+  .input-group.one::after {
+    right: calc(((100% - 117px * 3) / 2 - 8px) / 2 + 117px);
+  }
+  .confirm-btn {
+    width: 138px;
+    height: 44px;
+    font-size: 21px;
+  }
+  .logout-btn {
+    width: 108px;
+    height: 27px;
+    line-height: 27px;
+    font-size: 16px;
+  }
+  .input-group.one {
+    margin-top: 6vh;
+  }
+  .input-group.two {
+    margin-bottom: 6vh;
+  }
+  .userinfo {
+    width: calc(100% - 138px);
+    padding-right: 0;
+    margin-bottom: 4px;
+    font-size: 15px;
+    color: #000;
+  }
+  .userinfo p {
+    display: inline;
+  }
+  .notice {
+    padding: 0;
+  }
+  .notice-inner {
+    padding: 5px 0;
+    background: transparent;
+  }
+  .notice-title {
+    font-size: 18px;
+  }
+  .notice-item {
+    font-size: 15px;
+  }
+  .footer {
+    height: 106px;
+  }
+  .small-logo {
+    width: 49px;
+    height: 49px;
+    margin: 0 8px;
+  }
+  .copyright {
+    padding-left: 33px;
+  }
+  .copyright-message {
+    width: calc(100% - 100px);
+    font-size: 12px;
+  }
+  .copyright-message p:first-child {
+    margin-bottom: 1rem;
+  }
+}
+
+/* smaller screen */
+@media screen and (min-width: 992px) {
+  .container-bg {
+    bottom: 76px;
+    background-image: url("../imgg/tablet-h-bg.jpg");
+  }
+  .container::before {
+    height: 9px;
+    background-image: url("../imgg/top_teeth-l.png")
+  }
+  .logo {
+    width: 15vw;
+    height: 4vw;
+    left: 17vw;
+    background-image: url("../imgg/logo.png");
+  }
+  .mobile-mask {
+    display: none;
+  }
+  .main {
+    float: right;
+    margin-right: calc(50% - 345px);
+    padding-top: 15vh;
+    padding-bottom: 81px; /* footer 76 + margin 5 */
+    width: 345px;
+  }
+  .main-title,
+  .main-desc {
+    color: #161616;
+  }
+  .main:not(.ar_wrap) .main-title,
+  .main:not(.ar_wrap) .main-desc {
+    text-align: left;
+  }
+  .ar_wrap .main-title,
+  .ar_wrap .main-desc  {
+    text-align: right;
+  }
+  .main-desc p {
+    display: block;
+  }
+  .main-desc .highlight {
+    color: #295396;
+  }
+  .main-title {
+    font-size: 43px;
+  }
+  .main-desc {
+    font-size: 20px;
+  }
+  .loginbtn-group {
+    margin: 6vh 0;
+    width: 326px;
+  }
+  .btn-item {
+    width: 60px;
+    height: 60px;
+  }
+  .btn-item.facebook {
+    background-image: url("../imgg/facebook-m.png");
+  }
+  .btn-item.vk {
+    background-image: url("../imgg/vk-m.png");
+  }
+  .btn-item.huawei {
+    background-image: url("../imgg/huawei-m.png");
+  }
+  .btn-item.google {
+    background-image: url("../imgg/google-m.png");
+  }
+  .input-group {
+    margin-right: 0;
+    margin-left: 0;
+  }
+  .input-btn {
+    width: 100px;
+    height: 38px;
+    background-color: #ebebeb;
+    box-shadow: inset 0px 3px 2px 0px rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+  }
+  .input-group.one {
+    margin-top: 6vh;
+    margin-bottom: 2vh;
+  }
+  .input-group.one::before,
+  .input-group.one::after {
+    width: 8px;
+    height: 2px;
+    top: 18px;
+    background: #161616;
+  }
+  .input-group.one::before {
+    left: calc(((100% - 100px * 3) / 2 - 8px) / 2 + 100px);
+  }
+  .input-group.one::after {
+    right: calc(((100% - 100px * 3) / 2 - 8px) / 2 + 100px);
+  }
+  .confirm-btn {
+    width: 116px;
+    height: 37px;
+    font-size: 17px;
+  }
+  .logout-btn {
+    width: 92px;
+    height: 23px;
+    line-height: 23px;
+    font-size: 13px;
+  }
+  .userinfo {
+    width: calc(100% - 116px);
+    padding-right: 0;
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: #000;
+  }
+  .userinfo p {
+    display: inline;
+  }
+  .notice {
+    display: block;
+    position: static;
+    padding: 0;
+    border: 0;
+    width: inherit;
+  }
+  .notice-inner {
+    padding: 5px 0;
+    background: transparent;
+  }
+  .notice-title {
+    font-size: 14px;
+  }
+  .notice-item {
+    font-size: 12px;
+  }
+  .footer {
+    height: 76px;
+  }
+  .small-logo {
+    width: 38px;
+    height: 38px;
+    margin: 0 6px;
+  }
+  .copyright-message {
+    width: inherit;
+    font-size: 12px;
+  }
+  .notice-toggle {
+    display: none;
+  }
+}
+
+/* pc */
+@media screen and (min-width: 1200px) {
+  .container-bg {
+    bottom: 115px;
+    background-image: url("../imgg/bg.jpg");
+  }
+  .logo {
+    width: 11vw;
+    height: 3vw;
+    top: 1vw;
+    left: calc(50% - 23vw);
+  }
+  .mobile-mask {
+    display: none;
+  }
+  .main {
+    margin-right: calc(50% - 462px);
+    padding-top: 14vh;
+    padding-bottom: 120px; /* footer 115 + margin 5 */
+    width: 462px;
+  }
+  .main-title {
+    font-size: 58px;
+  }
+  .main-desc {
+    font-size: 26px;
+    font-weight: normal;
+  }
+  .loginbtn-group {
+    margin: 6vh 0;
+    width: 434px;
+  }
+  .btn-item {
+    width: 80px;
+    height: 80px;
+  }
+  .btn-item.facebook {
+    background-image: url("../imgg/facebook-l.png");
+  }
+  .btn-item.vk {
+    background-image: url("../imgg/vk-l.png");
+  }
+  .btn-item.huawei {
+    background-image: url("../imgg/huawei-l.png");
+  }
+  .btn-item.google {
+    background-image: url("../imgg/google-l.png");
+  }
+  .input-btn {
+    width: 125px;
+    height: 47px;
+    background-color: #ebebeb;
+    box-shadow: inset 0px 3px 2px 0px rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+  }
+  .input-group.one {
+    margin-top: 5vh;
+    margin-bottom: 2vh;
+  }
+  .input-group.two {
+    margin-bottom: 7vh;
+  }
+  .input-group.one::before,
+  .input-group.one::after {
+    width: 9px;
+    height: 4px;
+    top: 21px;
+    background: #161616;
+  }
+  .input-group.one::before {
+    left: calc(((100% - 125px * 3) / 2 - 9px) / 2 + 125px);
+  }
+  .input-group.one::after {
+    right: calc(((100% - 125px * 3) / 2 - 9px) / 2 + 125px);
+  }
+  .confirm-btn {
+    width: 146px;
+    height: 46px;
+    font-size: 22px;
+  }
+  .logout-btn {
+    width: 115px;
+    height: 28px;
+    line-height: 28px;
+    font-size: 17px;
+  }
+  .userinfo {
+    width: calc(100% - 146px);
+    padding-right: 0;
+    margin-bottom: 4px;
+    font-size: 16px;
+    color: #000;
+  }
+  .notice-title {
+    font-size: 19px;
+  }
+  .notice-item {
+    font-size: 16px;
+  }
+  .footer {
+    height: 115px;
+  }
+  .small-logo {
+    width: 50px;
+    height: 50px;
+    margin: 0 10px;
+  }
+}

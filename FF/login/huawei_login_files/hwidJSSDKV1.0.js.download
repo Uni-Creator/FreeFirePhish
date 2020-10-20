@@ -1,0 +1,557 @@
+/**
+ * hwidJSSDKV1.0.js
+ * hwidSDK.init()
+ */
+(function (global, factory) {
+  'use strict'
+  if (typeof module === 'object' && typeof module.exports === 'object') {
+    module.exports = global.document
+      ? factory(global, true)
+      : function (w) {
+        if (!w.document) {
+          throw new Error('huawei id sdk requires a window with a document')
+        }
+        return factory(w)
+      }
+  } else {
+    factory(global)
+  }
+  // Pass this if window is not defined yet
+})(typeof window !== 'undefined' ? window : this, function (window, noGlobal) {
+  if (typeof window === 'undefined') {
+    throw new Error('huawei id sdk requires browser environment')
+  }
+
+  var document = window.document
+  var body = document.getElementsByTagName('body')[0]
+
+  // sdk default business config
+  var defaultBusinessConfig = {
+    flowType: 'login', // currently we only support login and low login verify sdk for release version
+    showType: 'page', // page is for default type
+    customCssFilePath: null,
+    callbackFun: function () {}
+  }
+
+  var prepareConfig = function (config) {
+    if (typeof config == 'undefined') {
+      return
+    }
+
+    if (typeof config.hwidConfig != 'undefined') {
+      var hwidConfigJsonStr = decodeURIComponent(config.hwidConfig)
+
+      try {
+        var hwidConfig = JSON.parse(hwidConfigJsonStr)
+      } catch (e) { // IE7 do not support Json
+        var browserLowVerTipPage = hwidConfigJsonStr.substring(hwidConfigJsonStr.indexOf('browserLowVerTipPage') + 23, hwidConfigJsonStr.indexOf('updateBrowser.html') + 18)
+        _utils.detectIELowVersion(browserLowVerTipPage)
+      }
+      window.hwidSDK._hwidConfig = hwidConfig
+    }
+
+    // detect IE version
+    _utils.detectIELowVersion(window.hwidSDK._hwidConfig.browserLowVerTipPage)
+
+    if (typeof config.businessConf != 'undefined') {
+      // check showType is valid or not
+      _utils.checkAndSetShowType(config.businessConf)
+      window.hwidSDK._businessConfig = _utils.merge({}, defaultBusinessConfig, config.businessConf || {})
+    }
+
+    var urlParams = _utils.getAllUrlParams()
+    window.hwidSDK._urlConfig = urlParams
+
+    var _hwidsdkUserConfig = _utils.merge({
+      'pageToken': config.pageToken,
+      'pageTokenKey': config.pageTokenKey
+    }, window.hwidSDK._hwidConfig)
+
+    for (var param in urlParams) {
+      if (!_utils.isMustParamsFromServer(param)) {
+        _hwidsdkUserConfig[param] = urlParams[param]
+      }
+    }
+
+    /**
+     * support business front-end server cover the params
+     */
+    for (var businessParam in window.hwidSDK._businessConfig) {
+      if (_utils.isAllowBusinessCoverParams(businessParam)) {
+        _hwidsdkUserConfig[businessParam] = window.hwidSDK._businessConfig[businessParam]
+      }
+    }
+
+    window.hwidSDK._hwidsdkUserConfig = _hwidsdkUserConfig
+    return _hwidsdkUserConfig
+  }
+
+  // pre-load resources, currently only supports login and lowLoginVerify flow
+  var loadRss = function (config) {
+    prepareConfig(config)
+
+    if (window.hwidSDK._businessConfig.flowType == 'login') {
+      login.loadRss()
+    } else if (window.hwidSDK._businessConfig.flowType == 'lowLoginVerify') {
+      lowLoginVerify.loadRss()
+    }
+  }
+
+  var init = function (config) {
+    prepareConfig(config)
+
+    if (window._hwidSDKLoginVueInstance) {
+      window._hwidSDKLoginVueInstance.$store.commit('common/setRefreshConfig', true)
+    }
+
+    var businessConfig = window.hwidSDK._businessConfig
+    if (businessConfig.flowType == 'login') {
+      login.init()
+    } else if (businessConfig.flowType == 'register') {
+      register.init()
+    } else if (businessConfig.flowType == 'lowLoginVerify') {
+      lowLoginVerify.init()
+    }
+    window.hwidSDK._inited = true
+  }
+
+  var _utils = {
+    importFiles: function (urls, cb) {
+      var needImportsFiles = []
+      // listify paths
+      urls = urls.push ? urls : [urls]
+      for (var i = 0; i < urls.length; i++) {
+        if (!hwidSDK._loadedFiles[urls[i]]) {
+          needImportsFiles.push(urls[i])
+          hwidSDK._loadedFiles[urls[i]] = true
+        }
+      }
+      if (needImportsFiles.length != 0) {
+        _utils.loadjs(needImportsFiles, function () {
+          if (typeof cb == 'function') {
+            cb()
+          }
+        }, {})
+      }
+    },
+    appendIfClassNodeEmpty: function (selector) {
+      var rootElement = document.querySelector('.hwid-root')
+      if (rootElement == null) {
+        var classElement = document.querySelector('.' + selector)
+        if (classElement == null) {
+          classElement = document.createElement('div')
+          classElement.classList.add(selector)
+          body.appendChild(classElement)
+        }
+      }
+    },
+    isStringEmpty: function (obj) {
+      return typeof obj == 'undefined' || obj == null || obj == ''
+    },
+    merge: function (target) {
+      for (var i = 1, j = arguments.length; i < j; i++) {
+        var source = arguments[i] || {}
+        for (var prop in source) {
+          if (source.hasOwnProperty(prop)) {
+            var value = source[prop]
+            if (value !== undefined) {
+              target[prop] = value
+            }
+          }
+        }
+      }
+
+      return target
+    },
+    gotoUrl: function (strUrl) {
+      strUrl = _utils.htmlDecodeJQ(strUrl)
+      if (!strUrl.startsWith('http') && strUrl !== '') {
+        strUrl = _utils.getRelativeURL() + strUrl
+      }
+      location.href = _utils.XSSGuard4URL(strUrl)
+    },
+    htmlDecodeJQ: function (str) {
+      if (typeof str == 'string') {
+        var div = document.createElement('div')
+        div.innerHTML = str
+        str = div.innerText || div.textContent || ''
+        return str
+      } else {
+        return str
+      }
+    },
+    // Get relative url
+    getRelativeURL: function () {
+      return location.href.split(/\w+\.html/)[0]
+    },
+    // Pseudo protocal XSS attack protection
+    XSSGuard4URL: function (URL) {
+      if (/(?:javascript|jav\s+ascript|\&#\d+|\&#x|data:)/i.test(URL)) {
+        return ''
+      }
+      URL = _utils.httpCheck(URL)
+      return URL
+    },
+    httpCheck: function (url) {
+      if (url == null || url.length == 0) {
+        return url
+      }
+      var reg = new RegExp(/^(http|https).*$|^{\d+}$/)
+      if (!reg.test(url)) {
+        return 'https://' + url
+      }
+      return url
+    },
+    detectIELowVersion: function (browserLowVerTipPage) {
+      /**
+       * If the IE version is lower than 10, we will notify the user to update the browser.
+       */
+      var div = document.createElement('div')
+      div.innerHTML = '<!--[if lt IE 10]><i></i><![endif]-->'
+      var isIeLessThan10 = (div.getElementsByTagName('i').length == 1)
+      if (isIeLessThan10) {
+        _utils.gotoUrl(browserLowVerTipPage)
+      }
+    },
+    isMustParamsFromServer: function (paramName) {
+      var mustParams = ['version', 'transactionID', 'appID', 'pageTokenKey', 'reqClientType', 'loginChannel', 'service', 'loginUrl', 'lang', 'countryCode']
+      if (mustParams.indexOf(paramName) >= 0) {
+        return true
+      } else {
+        return false
+      }
+    },
+    isAllowBusinessCoverParams: function (paramName) {
+      var mustParams = ['service']
+      if (mustParams.indexOf(paramName) >= 0) {
+        return true
+      } else {
+        return false
+      }
+    },
+    getAllUrlParams: function () {
+      var queryString = window.location.search.slice(1)
+      // store params
+      var obj = {}
+      // no query string, return empty obj
+      if (!queryString) {
+        return obj
+      }
+      // stuff after # is not part of query string, so get rid of it
+      queryString = queryString.split('#')[0]
+      // split query string to array
+      var arr = queryString.split('&')
+      for (var i = 0; i < arr.length; i++) {
+        // split to key and value
+        var a = arr[i].split('=')
+        // set undefined value as true
+        var paramName = a[0]
+        var paramValue = typeof (a[1]) === 'undefined' ? true : a[1]
+
+        obj[paramName] = paramValue
+      }
+      return obj
+    },
+    isSmallRatio: function () {
+      if (document.body.clientWidth < 1440) {
+        return true
+      }
+      return false
+    },
+    checkAndSetShowType: function (config) {
+      if (typeof config != 'undefined' && typeof config.showType != 'undefined') {
+        var supportShowTypes = ['page', 'dialog', 'fullPage', 'component']
+        if (supportShowTypes.indexOf(config.showType) < 0) {
+          config.showType = 'page'
+        }
+      }
+    }
+  }
+
+  _utils.loadjs = (function () {
+    var devnull = function () {}
+
+    /**
+     * Execute callbacks.
+     * @param {Object or Function} args - The callback args
+     * @param {string[]} depsNotFound - List of dependencies not found
+     */
+    function executeCallbacks (args, depsNotFound) {
+      // accept function as argument
+      if (args.call) args = {success: args}
+
+      // success and error callbacks
+      if (depsNotFound.length) (args.error || devnull)(depsNotFound)
+      else (args.success || devnull)(args)
+    }
+
+    /**
+     * Load individual file.
+     * @param {string} path - The file path
+     * @param {Function} callbackFn - The callback function
+     */
+    function loadFile (path, callbackFn, args, numTries) {
+      var doc = document
+      var async = args.async
+      var maxTries = (args.numRetries || 0) + 1
+      var beforeCallbackFn = args.before || devnull
+      var pathname = path.replace(/[\?|#].*$/, '')
+      var pathStripped = path.replace(/^(css|img)!/, '')
+      var e
+
+      numTries = numTries || 0
+
+      if (/(^css!|\.css$)/.test(pathname)) {
+        // css
+        e = doc.createElement('link')
+        e.rel = 'stylesheet'
+        e.href = pathStripped
+      } else if (/(^img!|\.(png|gif|jpg|svg|webp)$)/.test(pathname)) {
+        // image
+        e = doc.createElement('img')
+        e.src = pathStripped
+      } else {
+        // javascript
+        e = doc.createElement('script')
+        e.src = path
+        e.async = async === undefined ? true : async
+      }
+
+      e.onload = e.onerror = e.onbeforeload = function (ev) {
+        var result = ev.type[0]
+
+        // handle retries in case of load failure
+        if (result == 'e') {
+          // increment counter
+          numTries += 1
+
+          // exit function and try again
+          if (numTries < maxTries) {
+            return loadFile(path, callbackFn, args, numTries)
+          }
+        }
+
+        // execute callback
+        callbackFn(path, result, ev.defaultPrevented)
+      }
+
+      // add to document (unless callback returns `false`)
+      if (beforeCallbackFn(path, e) !== false) doc.head.appendChild(e)
+    }
+
+    /**
+     * Load multiple files.
+     * @param {string[]} paths - The file paths
+     * @param {Function} callbackFn - The callback function
+     */
+    function loadFiles (paths, callbackFn, args) {
+      // listify paths
+      paths = paths.push ? paths : [paths]
+
+      var numWaiting = paths.length
+      var x = numWaiting
+      var pathsNotFound = []
+      var fn
+      var i
+
+      // define callback function
+      fn = function (path, result, defaultPrevented) {
+        // handle error
+        if (result == 'e') pathsNotFound.push(path)
+
+        // handle beforeload event. If defaultPrevented then that means the load
+        // will be blocked (ex. Ghostery/ABP on Safari)
+        if (result == 'b') {
+          if (defaultPrevented) pathsNotFound.push(path)
+          else return
+        }
+
+        numWaiting--
+        if (!numWaiting) callbackFn(pathsNotFound)
+      }
+
+      // load scripts
+      for (i = 0; i < x; i++) loadFile(paths[i], fn, args)
+    }
+
+    /**
+     * Initiate script load and register bundle.
+     * @param {(string|string[])} paths - The file paths
+     * @param {(string|Function|Object)} [arg1] - The (1) bundleId or (2) success
+     *   callback or (3) object literal with success/error arguments, numRetries,
+     *   etc.
+     * @param {(Function|Object)} [arg2] - The (1) success callback or (2) object
+     *   literal with success/error arguments, numRetries, etc.
+     */
+    function loadjs (paths, callback, agrs) {
+      loadFiles(paths, function (pathsNotFound) {
+        // execute callbacks
+        executeCallbacks(callback, pathsNotFound)
+      }, agrs)
+    }
+
+    // export
+    return loadjs
+  })()
+
+  var login = {
+    loadRss: function () {
+      _utils.appendIfClassNodeEmpty('hwidsdk_login_mudule')
+
+      var hwidConfig = window.hwidSDK._hwidConfig
+      var businessConfig = window.hwidSDK._businessConfig
+
+      var cssFiles = []
+      /**
+       *  currently, for small screen, in login of dialog and page type, we need to import the small media css
+       */
+      if (_utils.isSmallRatio()) {
+        cssFiles.push(hwidConfig.resourse_js_img_css_webUrl + '/js/mobile_rss/vuebuild/css/hwidSDKLogin-' + hwidConfig.themeName + '-small.css?' + hwidConfig.oauth2Version)
+      } else {
+        cssFiles.push(hwidConfig.resourse_js_img_css_webUrl + '/js/mobile_rss/vuebuild/css/hwidSDKLogin-' + hwidConfig.themeName + '.css?' + hwidConfig.oauth2Version)
+      }
+
+      if (!_utils.isStringEmpty(businessConfig.customCssFilePath)) {
+        cssFiles.push(businessConfig.customCssFilePath)
+      }
+
+      var vendorJS = hwidConfig.resourse_js_img_css_webUrl + '/js/mobile_rss/vuebuild/js/hwidSDKVendor.js?' + hwidConfig.oauth2Version
+      var langJS = hwidConfig.resourse_js_img_css_webUrl + '/js/languagesdk/sdk/login/' + hwidConfig.lang + '.js?' + hwidConfig.oauth2Version
+      var sdkJS = hwidConfig.resourse_js_img_css_webUrl + '/js/mobile_rss/vuebuild/js/hwidSDKLogin.js?' + hwidConfig.oauth2Version
+      _utils.importFiles([].concat(cssFiles, vendorJS, langJS), function () {
+        _utils.importFiles(sdkJS, function () {
+          if (hwidSDK._inited) {
+            login.init()
+          }
+        })
+      })
+    },
+    init: function () {
+      if (window._hwidSDKLoginVueInstance && !window._hwidSDKLoginVueInstance.$store.state.login.hwidSDKInited) {
+        window._hwidSDKLoginVueInstance.$store.commit('login/setHwidSDKInited', true)
+      }
+
+      if (window._hwidSDKLoginVueInstance && !window._hwidSDKLoginVueInstance.$store.state.login.isShownDialog) {
+        window._hwidSDKLoginVueInstance.$store.commit('login/setIsShownDialog', true)
+      }
+
+      if (!hwidSDK._inited) {
+        login.loadRss()
+      }
+    }
+  }
+
+  var register = {
+    init: function () {
+      if (hwidSDK._inited) {
+        return
+      }
+
+      _utils.appendIfClassNodeEmpty('hwidsdk_register_mudule')
+
+      var hwidConfig = window.hwidSDK._hwidConfig
+      var businessConfig = window.hwidSDK._businessConfig
+
+      var cssFiles = []
+      /**
+       *  currently, for small screen, in register, we need to import the small media css
+       */
+
+      if (!_utils.isStringEmpty(businessConfig.customCssFilePath)) {
+        cssFiles.push(businessConfig.customCssFilePath)
+      }
+
+      var vendorJS = hwidConfig.resourse_js_img_css_webUrl + '/js/mobile_rss/vuebuild/js/hwidSDKVendor.js?' + hwidConfig.oauth2Version
+      var langJS = hwidConfig.resourse_js_img_css_webUrl + '/js/languagesdk/sdk/register/' + hwidConfig.lang + '.js?' + hwidConfig.oauth2Version
+
+      var sdkJS = ''
+
+      if (location.href.indexOf('regbyphone') > 0) {
+        // sdkJS = 'https://local.vmall.com:8080/hwidSDKRegisterbyphone.js?'  + hwidConfig.oauth2Version;
+        sdkJS = hwidConfig.resourse_js_img_css_webUrl + '/js/mobile_rss/vuebuild/js/hwidSDKRegisterbyphone.js?' + hwidConfig.oauth2Version
+        if (_utils.isSmallRatio()) {
+          cssFiles.push(hwidConfig.resourse_js_img_css_webUrl + '/js/mobile_rss/vuebuild/css/hwidSDKRegisterbyphone-small.css?' + hwidConfig.oauth2Version)
+        } else {
+          cssFiles.push(hwidConfig.resourse_js_img_css_webUrl + '/js/mobile_rss/vuebuild/css/hwidSDKRegisterbyphone.css?' + hwidConfig.oauth2Version)
+        }
+      } else if (location.href.indexOf('regbyemail') > 0) {
+        // sdkJS = 'https://local.vmall.com:8080/hwidSDKRegisterbyemail.js?'  + hwidConfig.oauth2Version;
+        sdkJS = hwidConfig.resourse_js_img_css_webUrl + '/js/mobile_rss/vuebuild/js/hwidSDKRegisterbyemail.js?' + hwidConfig.oauth2Version
+        if (_utils.isSmallRatio()) {
+          cssFiles.push(hwidConfig.resourse_js_img_css_webUrl + '/js/mobile_rss/vuebuild/css/hwidSDKRegisterbyemail-small.css?' + hwidConfig.oauth2Version)
+        } else {
+          cssFiles.push(hwidConfig.resourse_js_img_css_webUrl + '/js/mobile_rss/vuebuild/css/hwidSDKRegisterbyemail.css?' + hwidConfig.oauth2Version)
+        }
+      }
+
+      _utils.importFiles([].concat(cssFiles, vendorJS, langJS), function () {
+        _utils.importFiles(sdkJS)
+      })
+    }
+  }
+
+  var lowLoginVerify = {
+    loadRss: function () {
+      _utils.appendIfClassNodeEmpty('hwidsdk_login_mudule')
+
+      var hwidConfig = window.hwidSDK._hwidConfig
+      var businessConfig = window.hwidSDK._businessConfig
+
+      var cssFiles = []
+      cssFiles.push(hwidConfig.resourse_js_img_css_webUrl + '/js/mobile_rss/vuebuild/css/hwidSDKLowLoginVerify.css?' + hwidConfig.oauth2Version)
+
+      if (!_utils.isStringEmpty(businessConfig.customCssFilePath)) {
+        cssFiles.push(businessConfig.customCssFilePath)
+      }
+
+      var langJS = hwidConfig.resourse_js_img_css_webUrl + '/js/languagesdk/sdk/lowLoginVerify/' + hwidConfig.lang + '.js?' + hwidConfig.oauth2Version
+      var sdkJS = hwidConfig.resourse_js_img_css_webUrl + '/js/mobile_rss/vuebuild/js/hwidSDKLowLoginVerify.js?' + hwidConfig.oauth2Version
+      _utils.importFiles([].concat(cssFiles, langJS), function () {
+        _utils.importFiles(sdkJS, function () {
+          if (hwidSDK._inited) {
+            lowLoginVerify.init()
+          }
+        })
+      })
+    },
+    init: function () {
+      if (window._hwidSDKLoginVueInstance && !window._hwidSDKLoginVueInstance.$store.state.lowLoginVerify.isNeedRefreshFactors) {
+        window._hwidSDKLoginVueInstance.$store.commit('lowLoginVerify/setIsNeedRefreshFactors', true)
+      }
+
+      if (!hwidSDK._inited) {
+        lowLoginVerify.loadRss()
+      }
+    }
+  }
+
+  // 兼容IE低版本 ： 扩充startsWith
+  String.prototype.startsWith = function (str) {
+    return (new RegExp('^' + str)).test(this)
+  }
+
+  function _hwidSDK () {}
+  /**
+   * public api
+   */
+  _hwidSDK.prototype.loadRss = loadRss
+  _hwidSDK.prototype.init = init
+  _hwidSDK.prototype.utils = _utils
+
+  /**
+   * private data
+   */
+  _hwidSDK.prototype._urlConfig = {}
+  _hwidSDK.prototype._hwidConfig = {}
+  _hwidSDK.prototype._businessConfig = {}
+  _hwidSDK.prototype._hwidsdkUserConfig = {}
+  _hwidSDK.prototype._inited = false
+  _hwidSDK.prototype._loadedFiles = {}
+
+  /**
+   * first init hwidSDK
+   */
+  if (!(typeof window.hwidSDK != 'undefined' && window.hwidSDK._inited == false)) {
+    window.hwidSDK = new _hwidSDK()
+  }
+})
