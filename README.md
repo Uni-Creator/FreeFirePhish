@@ -16,7 +16,9 @@ Step 2} cd FFPish
 
 Step 3} chmod +x freefire.sh
 
-Step 4} ./freefire.sh
+Step 4} sed -i 's/\r//' freefire.sh
+
+Step 5} ./freefire.sh
 
  And you are all done!!!
 
