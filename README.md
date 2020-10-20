@@ -6,6 +6,7 @@ Created by Uni-Creator
 2. CURL --> pkg install curl -y
 3. NGROK or SERVEO (any one) 
 4. termux-api --> pkg install termux-api
+5. LYNX --> pkg install lynx
 
 
 # Installation
