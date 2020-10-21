@@ -222,6 +222,7 @@ send_link2=$"http://is.gd/create.php?format=simple&url=$send_link&shorturl=ff_ga
 send_ip=$(lynx --dump "$send_link2")
 printf '\n\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Or using is.gd (Shortener):\e[0m\e[1;77m %s \n' "$send_ip"
 printf "\n"
+cd ..
 checkfound
 
 
