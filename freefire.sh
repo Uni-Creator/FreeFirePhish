@@ -5,7 +5,7 @@
 
 
 
-trap 'printf "\n";stop1;exit 1' 2
+#trap 'printf "\n";stop1;exit 1' 2
 
 #server = "FF"
 
