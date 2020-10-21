@@ -22,7 +22,7 @@ command -v lynx > /dev/null 2>&1 || { echo >&2 "I require lynx but it's not inst
 menu() {
 
 
-printf "\e[1;91m  Instructions:  \n[1] You must have install php, curl, lynx and ngrok or serveo.net \n[2] If not then this script can not generate the links. \n[3] Ngrok or Serveo must be placed in the same folder in which FFPhish folder is .\n\e[0m \n"
+printf "\e[1;91m  Instructions:  \n[1] You must have install php, curl, lynx and ngrok or serveo.net \n[2] If not then this script can not generate the links. \n[3] Ngrok or Serveo must be placed in the same folder in which FFPhish folder is .\n[4] And most important if you choose ngrok server then your hotspot must be turned on...\n\e[0m \n"
 read -r -p $'\e[1;93m[\e[1;92m*\e[1;93m]\e[1;92m Start the Phishing (Y/n): \e[0m' option
 
 
