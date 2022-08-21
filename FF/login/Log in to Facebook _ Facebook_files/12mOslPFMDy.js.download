@@ -1,0 +1,3 @@
+if (self.CavalryLogger) { CavalryLogger.start_js(["lm2WV"]); }
+
+__d("goOrReplace",["Env","URI","isFacebookURI"],(function(a,b,c,d,e,f){e.exports=a;var g,h;function a(a,c,d){c=new(g||(g=b("URI")))(c);(h||(h=b("Env"))).isCQuick&&b("isFacebookURI")(c)&&c.addQueryData({cquick:(h||(h=b("Env"))).iframeKey,cquick_token:h.iframeToken,ctarget:h.iframeTarget});c=c.toString();d?a.replace(c):a.href==c?a.reload():a.href=c}}),null);

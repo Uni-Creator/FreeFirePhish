@@ -1,0 +1,5 @@
+if (self.CavalryLogger) { CavalryLogger.start_js(["PNQoF"]); }
+
+__d("PartnershipsMarketingLoggingUtils",["Event","UniversalMicroSiteTrackingController"],(function(a,b,c,d,e,f){"use strict";f.logSearchWithQuery=a;function a(a,c){b("Event").listen(a,"click",function(){b("UniversalMicroSiteTrackingController").performAsyncSearchLog(a,c.value)})}}),null);
+__d("PixelRatioConst",[],(function(a,b,c,d,e,f){e.exports=Object.freeze({cookieName:"dpr"})}),null);
+__d("VideoHomeClickLogger",["VideoHomeEvents","VideoHomeTypedLogger"],(function(a,b,c,d,e,f){"use strict";f.logClick=a;f.init=c;function a(a){var c=a.target,d=a.id,e=a.clickPoint;a=a.playerOrigin;a=a===void 0?"video_home":a;new(b("VideoHomeTypedLogger"))().setEvent(b("VideoHomeEvents").CLICK).setEventTarget(c).setEventTargetID(d).setClickPoint(e).setPlayerOrigin(a).log()}function c(a,b){var c=this;a.addEventListener("click",function(){c.logClick(b)})}}),null);
