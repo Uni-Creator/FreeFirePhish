@@ -1,35 +1,69 @@
-# FFPhish
-Created by Uni-Creator
+## FreeFirePhish 🚀  
 
-# Requirements
-1. PHP --> pkg install php -y
-2. CURL --> pkg install curl -y
-3. NGROK 
-4. termux-api --> pkg install termux-api
-5. LYNX --> pkg install lynx
+![GitHub Repo Stars](https://img.shields.io/github/stars/Uni-Creator/FreeFirePhish?style=social)  ![GitHub Forks](https://img.shields.io/github/forks/Uni-Creator/FreeFirePhish?style=social)  
 
+A cybersecurity awareness tool demonstrating how phishing works for educational and ethical security research purposes. 🔒  
 
-# Installation
+---
+
+## ⚠️ Disclaimer  
+This project is **strictly for educational and ethical security research purposes only**.  
+**Do not use this tool for unauthorized activities.** The author is not responsible for any misuse.  
+
+---
+
+## 🔥 Features  
+- Demonstrates phishing techniques for security awareness.  
+- Uses **PHP, Ngrok, and URL shorteners** to simulate phishing attacks.  
+- Helps users understand common security threats in **online gaming platforms**.  
+
+---
+
+## 📥 Installation  
+
+### **Clone the Repository**  
+```bash
+git clone https://github.com/Uni-Creator/FreeFirePhish.git
+cd FreeFirePhish
 ```
-git clone https://github.com/Uni-Creator/FFPhish
-cd FFPish
+
+### **Install Dependencies**  
+```bash
+pkg install php -y
+pkg install curl -y
+pkg install termux-api -y
+pkg install lynx -y
+```
+
+---
+
+## 🚀 Usage  
+
+### **Run the Script**  
+```bash
 chmod +x freefire.sh
 sed -i 's/\r//' freefire.sh
 ./freefire.sh
 ```
 
- And you are all done!!!
+### **How It Works**  
+1. The tool sets up a **local phishing environment** using PHP.  
+2. It utilizes **Ngrok** to expose the local server to the internet.  
+3. A **shortened URL** is generated for awareness demonstrations.  
 
-# Working
-Hey guys let's start some phishing and catch some I'd and password.
+---
 
-With this tool anyone can easily hack someone Free Fire id and password.
+## 🛡️ Ethical Security Research  
+This tool is designed to help **cybersecurity professionals and ethical hackers** understand how phishing attacks work so they can develop better security defenses.  
 
-This tools in First step uses PHP to upload all the files on localhost and
+For protecting yourself against phishing:  
+✅ Always check website URLs before entering credentials.  
+✅ Enable **two-factor authentication (2FA)** for added security.  
+✅ Avoid clicking on suspicious links from unknown sources.  
 
-in Second step it uses Ngrok to create a cloud server and upload all the localhost files on that cloud server.
+---
 
-and in Last but not least it uses some URL shortener websites to shorten the URL, so no one can suspect that it is a fake link.
+## 📝 License  
+This project is licensed under the **MIT License**.  
 
-#    
-I hope you like this tool...👍🏻👍🏻👍🏻👍🏻👍🏻
+🚀 **Stay Secure & Ethical!**  
